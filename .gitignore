@@ -1,31 +1,31 @@
 # ── Python ────────────────────────────────────────────────────────────────────
-__pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
+**/.env
 
-# ── AI Models (too large for GitHub — store on Google Drive) ──────────────────
-*.pt
-*.onnx
-voices.bin
-hf_cache/
+# ── AI Models (Large Files) ──────────────────────────────────────────────────
+**/*.pt
+**/*.onnx
+**/voices.bin
+**/hf_cache/
 
-# ── Generated data ────────────────────────────────────────────────────────────
-yolo_dataset/
-dataset_aug/
-static/stories/
-static/audio/
-runs/
+# ── Generated Data (Backend) ─────────────────────────────────────────────────
+**/yolo_dataset/
+**/dataset_aug/
+**/static/stories/
+**/static/audio/
+**/runs/
 
-# ── Flutter ───────────────────────────────────────────────────────────────────
-frontend/vibestory/build/
-frontend/vibestory/.dart_tool/
-frontend/vibestory/.flutter-plugins
-frontend/vibestory/.flutter-plugins-dependencies
-frontend/vibestory/pubspec.lock
+# ── Flutter (Frontend) ───────────────────────────────────────────────────────
+**/frontend/vibestory/build/
+**/frontend/vibestory/.dart_tool/
+**/frontend/vibestory/.flutter-plugins
+**/frontend/vibestory/.flutter-plugins-dependencies
+**/frontend/vibestory/pubspec.lock
 
-# ── OS junk ───────────────────────────────────────────────────────────────────
+# ── OS Junk ───────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
