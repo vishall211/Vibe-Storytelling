@@ -17,8 +17,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-// ─── Server ──────────────────────────────────────────────────────────────────
-const String kBaseUrl = 'http://192.168.31.201:8000';
+// ─── Server ───────────────────────────────────────────────────────────────────
+// LOCAL (same Wi-Fi): uncomment when running without ngrok
+//const String kBaseUrl = 'http://192.168.31.201:8000';
+
+// NGROK (for remote access): paste your ngrok URL here and comment line above
+const String kBaseUrl = 'https://synetic-lynne-impiously.ngrok-free.dev';
 
 // ─── Color Palette (dark only) ────────────────────────────────────────────────
 const Color kBg        = Color(0xFF0D0D0F);
