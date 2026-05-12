@@ -1,0 +1,31 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# ── AI Models (too large for GitHub — store on Google Drive) ──────────────────
+*.pt
+*.onnx
+voices.bin
+hf_cache/
+
+# ── Generated data ────────────────────────────────────────────────────────────
+yolo_dataset/
+dataset_aug/
+static/stories/
+static/audio/
+runs/
+
+# ── Flutter ───────────────────────────────────────────────────────────────────
+frontend/vibestory/build/
+frontend/vibestory/.dart_tool/
+frontend/vibestory/.flutter-plugins
+frontend/vibestory/.flutter-plugins-dependencies
+frontend/vibestory/pubspec.lock
+
+# ── OS junk ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
