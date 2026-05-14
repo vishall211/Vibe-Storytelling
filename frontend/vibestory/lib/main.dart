@@ -19,10 +19,10 @@ import 'package:permission_handler/permission_handler.dart';
 
 // ─── Server ───────────────────────────────────────────────────────────────────
 // LOCAL (same Wi-Fi): uncomment when running without ngrok
-//const String kBaseUrl = 'http://192.168.31.201:8000';
+const String kBaseUrl = 'http://192.168.31.201:8000';
 
 // NGROK (for remote access): paste your ngrok URL here and comment line above
-const String kBaseUrl = 'https://synetic-lynne-impiously.ngrok-free.dev';
+//const String kBaseUrl = 'https://synetic-lynne-impiously.ngrok-free.dev';
 
 // ─── Color Palette (dark only) ────────────────────────────────────────────────
 const Color kBg        = Color(0xFF0D0D0F);

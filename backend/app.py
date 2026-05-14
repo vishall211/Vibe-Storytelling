@@ -440,6 +440,7 @@ db          = _mongo[DB_NAME]
 users_col   = db["users"]
 stories_col = db["stories"]
 
+
 # ─── Schemas ──────────────────────────────────────────────────────────────────
 class SignupReq(BaseModel):
     name: str; email: str; password: str
