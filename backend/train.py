@@ -45,7 +45,7 @@ log = logging.getLogger("vibestory-train")
 # ─── CONFIG — change these to match your setup ────────────────────────────────
 
 # The base YOLO model to start fine-tuning from.
-# Your seniors used "yolo11l.pt". You can also use "yolov8n.pt" (faster/smaller).
+# Use "yolo11l.pt" for higher accuracy or "yolov8n.pt" for faster local runs.
 BASE_MODEL = os.getenv("BASE_MODEL", "yolo11l.pt")
 
 # Where the finished best.pt will be copied when training is done.
@@ -54,20 +54,20 @@ OUTPUT_WEIGHTS = os.getenv("OUTPUT_WEIGHTS", "best.pt")
 # The dataset folder that app.py writes to automatically.
 DATASET_DIR = os.getenv("DATASET_DIR", "yolo_dataset")
 
-# Training hyper-parameters (same as your seniors used)
+# Training hyper-parameters.
 EPOCHS     = int(os.getenv("EPOCHS",    "100"))
 BATCH_SIZE = int(os.getenv("BATCH",     "8"))
 IMG_SIZE   = int(os.getenv("IMGSZ",     "640"))
 
-# Augmentations per image (your seniors used 5)
+# Augmentations per image.
 AUG_PER_IMAGE = int(os.getenv("AUG_PER_IMAGE", "5"))
 
 # ═════════════════════════════════════════════════════════════════════════════
-#  AUGMENTATION  (identical to seniors' training.ipynb)
+#  AUGMENTATION
 # ═════════════════════════════════════════════════════════════════════════════
 
 def build_augmentation_pipeline() -> A.Compose:
-    """Same transforms your seniors used."""
+    """Build the image augmentation pipeline used during YOLO training."""
     return A.Compose(
         [
             A.HorizontalFlip(p=0.5),

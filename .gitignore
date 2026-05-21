@@ -3,7 +3,10 @@
 *.pyc
 *.pyo
 *.pyd
+*.log
 **/.env
+**/.venv/
+**/venv/
 
 # ── AI Models (Large Files) ──────────────────────────────────────────────────
 **/*.pt

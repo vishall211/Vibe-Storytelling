@@ -716,7 +716,7 @@ async def export_dataset(user=Depends(current_user)):
     Zips the entire yolo_dataset/ folder and returns it as a download.
 
     Use this to:
-      • Share the dataset with your team / seniors
+      • Move the dataset to another machine
       • Upload to Google Colab and run train.py
       • Back it up
 

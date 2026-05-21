@@ -1,17 +1,16 @@
-# vibestory
+# VibeStory Frontend
 
-A new Flutter project.
+Flutter client for the VibeStory mobile app.
 
-## Getting Started
+## Run
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get
+flutter run --dart-define=BASE_URL=http://localhost:8000
+```
 
-A few resources to get you started if this is your first Flutter project:
+For a physical phone, use the Mac's Wi-Fi IP:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter run --dart-define=BASE_URL=http://YOUR_MAC_IP:8000
+```

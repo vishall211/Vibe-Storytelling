@@ -16,7 +16,7 @@ ngrok.set_auth_token(NGROK_TOKEN)
 tunnel = ngrok.connect(8000)
 print("\n" + "="*50)
 print(f"  Public URL: {tunnel.public_url}")
-print(f"  Share this with your friend!")
+print("  Use this URL as BASE_URL for remote testing.")
 print("="*50 + "\n")
 
 print("Tunnel is live. Press Ctrl+C to close it.")

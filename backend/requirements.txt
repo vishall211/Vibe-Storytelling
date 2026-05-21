@@ -4,6 +4,7 @@ motor
 pymongo
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt<5
 python-multipart
 pydantic
 openai-whisper
@@ -16,6 +17,7 @@ torchvision
 ultralytics
 albumentations
 opencv-python
+kokoro-onnx
 soundfile
 pyyaml
 numpy

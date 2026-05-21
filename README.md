@@ -1,224 +1,250 @@
-# VibeStory 🎙️✨
+# VibeStory
 
-> **Speak about the world around you. Get a Ghibli-style illustrated story.**
+VibeStory is a mobile app that turns voice input into an illustrated and narrated story.
 
-VibeStory is an AI-powered mobile app where users point their camera at objects, record their voice, and receive a fully illustrated, narrated story — rendered in Studio Ghibli art style with ambient audio.
+The project has two parts:
 
----
+- `backend/` - FastAPI server written in Python
+- `frontend/vibestory/` - Flutter mobile app
 
-## 🏗️ Architecture
+## Features
 
-```
+- User signup and login
+- Voice input transcription
+- AI story scene generation
+- Image generation for each story part
+- Narration audio using Kokoro TTS
+- Object detection and label collection for YOLO training
+
+## Tech Stack
+
+| Part | Technology |
+|---|---|
+| Mobile app | Flutter |
+| Backend | FastAPI |
+| Database | MongoDB |
+| Speech-to-text | Whisper |
+| Image generation | Diffusers |
+| Text-to-speech | Kokoro ONNX |
+| Object detection | YOLO |
+
+## Folder Structure
+
+```text
 vibestory/
-├── backend/          ← FastAPI server (Python)
-│   ├── app.py        ← main server, all API routes
-│   ├── train.py      ← YOLO fine-tuner
+├── backend/
+│   ├── app.py
+│   ├── train.py
 │   └── requirements.txt
-│
 └── frontend/
-    └── vibestory/    ← Flutter mobile app
-        ├── lib/
-        │   └── main.dart
+    └── vibestory/
+        ├── lib/main.dart
         └── pubspec.yaml
 ```
 
-| Layer | Technology |
-|---|---|
-| Mobile App | Flutter (Android & iOS) |
-| Backend API | FastAPI + Uvicorn |
-| Database | MongoDB |
-| Speech-to-Text | OpenAI Whisper (local) |
-| Image Generation | Ghibli-Diffusion (local) |
-| Text-to-Speech | Kokoro ONNX (local) |
-| Object Detection | YOLOv11 (fine-tuned) |
+## Requirements
 
----
+Install these before running the project:
 
-## ⚙️ Backend Setup
+- Python 3.10 or newer
+- Flutter SDK
+- MongoDB
+- Xcode or Android Studio, depending on the device you want to run
 
-### 1. Prerequisites
-- Python 3.10 or 3.12
-- MongoDB running locally (`mongodb://localhost:27017`) or MongoDB Atlas URL
-- NVIDIA GPU strongly recommended for image generation (CPU works but is slow)
+## Backend Setup
 
-### 2. Install dependencies
+Go to the backend folder:
 
 ```bash
 cd backend
-pip install -r requirements.txt
 ```
 
-### 3. Install Kokoro TTS manually
-
-Kokoro is not on pip — download the model files from Hugging Face:
-
-```
-https://huggingface.co/hexgrad/Kokoro-82M
-```
-
-Download these two files and place them in the `backend/` folder:
-- `kokoro-v1.0.onnx`
-- `voices.bin`
-
-Then install the Python wrapper:
-```bash
-pip install kokoro-onnx soundfile
-```
-
-### 4. YOLO model (`best.pt`)
-
-The fine-tuned `best.pt` is **not committed to GitHub** (too large).
-
-- Get it from the team Google Drive
-- Place it in `backend/`
-- If missing, app automatically falls back to `yolov8n.pt`
-
-### 5. Create your `.env` file
+Create and activate a virtual environment:
 
 ```bash
-cp .env.example .env
+python3.12 -m venv .venv
+source .venv/bin/activate
 ```
 
-Edit `.env`:
+Install Python packages:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
+
+Create a `.env` file inside `backend/`:
+
+```env
 MONGO_URL=mongodb://localhost:27017
 DB_NAME=vibestory
 JWT_SECRET=replace_this_with_a_long_random_string
 WHISPER_MODEL=small
 YOLO_MODEL=best.pt
+IMAGE_STEPS=30
+IMAGE_CFG=5.0
+IMAGE_W=800
+IMAGE_H=400
+KOKORO_VOICE=af_heart
+DEFAULT_NUM_IMGS=5
+DATASET_DIR=yolo_dataset
 ```
 
-> ⚠️ Never commit `.env` to GitHub. The JWT_SECRET signs all login tokens — keep it private.
+## Required Model Files
 
-### 6. Run the server
+Place these files inside the `backend/` folder:
 
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
+```text
+kokoro-v1.0.onnx
+voices.bin
 ```
 
-Server starts at `http://localhost:8000`. Check health at `http://localhost:8000/api/health`.
+Optional YOLO model:
 
----
-
-## 📱 Flutter Setup
-
-### 1. Prerequisites
-- Flutter SDK 3.x — [flutter.dev](https://flutter.dev)
-- Android Studio or VS Code with Flutter extension
-- Android device or emulator
-
-### 2. Install packages
-
-```bash
-cd frontend/vibestory
-flutter pub get
+```text
+best.pt
 ```
 
-### 3. Add the app icon
+If `best.pt` is missing, the backend uses `yolov8n.pt` as a fallback.
 
-Place your icon at:
-```
-frontend/vibestory/assets/icon.png
-```
+## Run Backend
 
-### 4. Run the app
-
-```bash
-# Replace with your machine's local IP (run `ipconfig` on Windows to find it)
-flutter run --dart-define=BASE_URL=http://192.168.x.x:8000
-```
-
-Or edit `kBaseUrl` directly in `lib/main.dart` for quick local testing.
-
----
-
-## 🧠 Training the YOLO Model
-
-Users label objects in the app → labels are saved to `yolo_dataset/` automatically.
+Make sure MongoDB is running, then start the backend:
 
 ```bash
 cd backend
+source .venv/bin/activate
+uvicorn app:app --host 0.0.0.0 --port 8000
+```
 
-# Check your dataset is healthy before training
+Open this URL to check the backend:
+
+```text
+http://localhost:8000/api/health
+```
+
+## Frontend Setup
+
+Go to the Flutter app folder:
+
+```bash
+cd frontend/vibestory
+```
+
+Install Flutter packages:
+
+```bash
+flutter pub get
+```
+
+## Run Frontend
+
+If running on the same Mac:
+
+```bash
+flutter run --dart-define=BASE_URL=http://localhost:8000
+```
+
+If running on a physical phone, use your Mac's Wi-Fi IP:
+
+```bash
+ipconfig getifaddr en0
+```
+
+Then run:
+
+```bash
+flutter run --dart-define=BASE_URL=http://YOUR_MAC_IP:8000
+```
+
+Example:
+
+```bash
+flutter run --dart-define=BASE_URL=http://192.168.1.12:8000
+```
+
+## Useful API Routes
+
+| Method | Route | Use |
+|---|---|---|
+| POST | `/api/auth/signup` | Create account |
+| POST | `/api/auth/login` | Login |
+| POST | `/api/story/generate` | Generate story |
+| GET | `/api/story/{story_id}/status` | Check story status |
+| GET | `/api/profile` | Get user profile |
+| POST | `/api/learn/detect` | Detect objects |
+| POST | `/api/learn/submit-labels` | Save labels |
+| GET | `/api/health` | Check server health |
+
+## YOLO Training
+
+The app saves labelled images inside:
+
+```text
+backend/yolo_dataset/
+```
+
+To check the dataset:
+
+```bash
+cd backend
+source .venv/bin/activate
 python train.py --check
-
-# Train (fine-tunes from best.pt or yolo11l.pt)
-python train.py
-
-# Override hyperparameters
-EPOCHS=50 BATCH=4 python train.py
 ```
 
-After training, `best.pt` is written next to `train.py`. Share it via Google Drive with the team.
-
----
-
-## 📦 What is NOT in this repo
-
-These files are too large or machine-specific for GitHub:
-
-| File/Folder | Why excluded | Where to get it |
-|---|---|---|
-| `best.pt` | 300MB+ model weight | Team Google Drive |
-| `kokoro-v1.0.onnx` | 300MB TTS model | Hugging Face (link above) |
-| `voices.bin` | TTS voice data | Hugging Face (link above) |
-| `hf_cache/` | Whisper + Ghibli models auto-download | Auto on first run |
-| `yolo_dataset/` | User-generated training data | Export via `/api/learn/export-dataset` |
-| `.env` | Secrets | Copy from `.env.example` |
-
----
-
-## 🌐 API Endpoints
-
-| Method | Route | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Create account |
-| POST | `/api/auth/login` | Login, get JWT token |
-| POST | `/api/story/create` | Start story pipeline |
-| GET | `/api/story/{id}/status` | Poll story progress |
-| GET | `/api/profile` | User stats + story history |
-| POST | `/api/learn/detect` | YOLO object detection |
-| POST | `/api/learn/submit-labels` | Submit labelled image |
-| GET | `/api/learn/export-dataset` | Download full YOLO dataset ZIP |
-| GET | `/api/health` | Server + model status |
-
----
-
-## 🚀 Fresh Machine Setup (quick reference)
+To train:
 
 ```bash
-# 1. Clone
-git clone https://github.com/yourname/vibestory
-cd vibestory
-
-# 2. Backend
-cd backend
-pip uninstall bson -y          # fix common conflict
-pip install -r requirements.txt
-pip install kokoro-onnx soundfile
-cp .env.example .env           # fill in your values
-# → copy best.pt, kokoro-v1.0.onnx, voices.bin from Google Drive
-uvicorn app:app --host 0.0.0.0 --port 8000
-
-# 3. Flutter (new terminal)
-cd frontend/vibestory
-flutter pub get
-flutter run --dart-define=BASE_URL=http://YOUR_IP:8000
+python train.py
 ```
 
----
+After training, keep the final model as:
 
-## 👥 Team
+```text
+backend/best.pt
+```
 
-| Role | Responsibility |
-|---|---|
-| Backend | `app.py`, `train.py`, MongoDB, model hosting |
-| Frontend | `main.dart`, Flutter build, APK distribution |
+## Common Issues
 
----
+### ClientException: Failed to fetch
 
-## 📝 Notes
+Check these:
 
-- Whisper and Ghibli-Diffusion download automatically on first use (~4GB total). Keep internet on for first run.
-- Image generation is slow on CPU (~2–5 min per image). Use GPU if possible.
-- The YOLO dataset grows every time a user labels objects. Export and back it up regularly.
+- Backend is running on port `8000`
+- Phone and Mac are on the same Wi-Fi
+- `BASE_URL` uses your Mac IP when running on a phone
+- Health check opens on the phone: `http://YOUR_MAC_IP:8000/api/health`
+
+### Signup gives server error
+
+Install the backend dependencies again:
+
+```bash
+cd backend
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+### Audio is not generated
+
+Check that these files exist in `backend/`:
+
+```text
+kokoro-v1.0.onnx
+voices.bin
+```
+
+## Do Not Commit
+
+These files and folders are local only:
+
+```text
+backend/.env
+backend/.venv/
+backend/hf_cache/
+backend/static/
+backend/yolo_dataset/
+backend/*.pt
+backend/*.onnx
+backend/voices.bin
+```
