@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -1292,6 +1291,7 @@ class _LearnFromStoryScreenState extends State<LearnFromStoryScreen> {
             const Divider(color: kDivider, height: 1),
             Expanded(
               child: LearnImageScreen(
+                key: ValueKey(_selected),
                 imageUrl: widget.images[_selected],
                 storyId: widget.storyId,
                 imageIndex: _selected,
@@ -1454,7 +1454,7 @@ class _UserBox {
 class _LearnImageScreenState extends State<LearnImageScreen> {
   List<Map<String, dynamic>> _yoloDets = [];
   bool _detectLoading = false, _showYolo = false;
-  bool _drawMode = false, _submitted = false;
+  bool _drawMode = false;
   Offset? _drawStart, _drawCurrent;
   List<_UserBox> _userBoxes = [];
   final GlobalKey _imgKey = GlobalKey();
@@ -1560,7 +1560,13 @@ class _LearnImageScreenState extends State<LearnImageScreen> {
         'image_url':   widget.imageUrl,
         'labels':      labels,
       });
-      setState(() => _submitted = true);
+      final count = _userBoxes.length;
+      setState(() {
+        _userBoxes.clear();
+        _yoloDets.clear();
+        _showYolo = false;
+        _drawMode = false;
+      });
       if (mounted)
         showDialog(
           context: context,
@@ -1570,7 +1576,7 @@ class _LearnImageScreenState extends State<LearnImageScreen> {
                 borderRadius: BorderRadius.circular(16)),
             title: Text('Submitted', style: kHead(16)),
             content: Text(
-              'Found ${_userBoxes.length} object${_userBoxes.length == 1 ? '' : 's'}.\n'
+              'Found $count object${count == 1 ? '' : 's'}.\n'
               '+${res['points_awarded']} pts  ·  Total: ${res['new_score']}',
               style: kBody(14, color: kText),
             ),
@@ -1844,7 +1850,7 @@ class _LearnImageScreenState extends State<LearnImageScreen> {
                     icon: Icons.upload_rounded,
                     color: kGreen,
                     wide: true,
-                    onTap: _submitted ? null : _submitLabels,
+                    onTap: _submitLabels,
                   ),
                   const SizedBox(height: 8),
                   TextButton.icon(
