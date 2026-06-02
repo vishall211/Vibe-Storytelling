@@ -220,5 +220,4 @@ flutter run --dart-define=BASE_URL=http://YOUR_IP:8000
 ## 📝 Notes
 
 - Whisper and Ghibli-Diffusion download automatically on first use (~4GB total). Keep internet on for first run.
-- Image generation is slow on CPU (~2–5 min per image). Use GPU if possible.
 - The YOLO dataset grows every time a user labels objects. Export and back it up regularly.
