@@ -214,6 +214,8 @@ Check these:
 - Phone and Mac are on the same Wi-Fi
 - `BASE_URL` uses your Mac IP when running on a phone
 - Health check opens on the phone: `http://YOUR_MAC_IP:8000/api/health`
+- Whisper and Ghibli-Diffusion download automatically on first use (~4GB total). Keep internet on for first run.
+- The YOLO dataset grows every time a user labels objects. Export and back it up regularly.
 
 ### Signup gives server error
 
