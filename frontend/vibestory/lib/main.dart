@@ -1714,8 +1714,13 @@ class _LearnImageScreenState extends State<LearnImageScreen> {
                 await Api.post('/api/learn/rename-label', {
                   'story_id': widget.storyId,
                   'image_index': widget.imageIndex,
+                  'image_url': widget.imageUrl,
                   'label_index': idx,
                   'new_name': name,
+                  'labels': _yoloDets.map((d) => {
+                    'label': d['label'],
+                    'box': d['box'],
+                  }).toList(),
                 });
               } catch (_) {}
             },

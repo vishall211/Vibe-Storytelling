@@ -83,7 +83,17 @@ def _load_whisper():
     if _whisper_model is None:
         import whisper
         log.info("Loading Whisper '%s'…", WHISPER_MODEL)
-        _whisper_model = whisper.load_model(WHISPER_MODEL)
+        try:
+            _whisper_model = whisper.load_model(WHISPER_MODEL)
+        except Exception as e:
+            cache_dir = Path.home() / ".cache" / "whisper"
+            cached_pts = list(cache_dir.glob("*.pt")) if cache_dir.exists() else []
+            if cached_pts:
+                fallback_name = cached_pts[0].stem
+                log.warning("Whisper '%s' failed (%s) — falling back to cached '%s'", WHISPER_MODEL, e, fallback_name)
+                _whisper_model = whisper.load_model(fallback_name)
+            else:
+                raise e
         log.info("Whisper loaded")
     return _whisper_model
 
@@ -94,9 +104,16 @@ def _load_diffusion():
         from diffusers import StableDiffusionPipeline
         dtype = torch.float16 if torch.cuda.is_available() else torch.float32
         log.info("Loading Ghibli-Diffusion…")
-        pipe = StableDiffusionPipeline.from_pretrained(
-            GHIBLI_MODEL_ID, torch_dtype=dtype,
-            safety_checker=None, requires_safety_checker=False)
+        try:
+            pipe = StableDiffusionPipeline.from_pretrained(
+                GHIBLI_MODEL_ID, torch_dtype=dtype,
+                safety_checker=None, requires_safety_checker=False,
+                local_files_only=True)
+        except Exception as e:
+            log.info("Local-only load failed (%s), attempting online load…", e)
+            pipe = StableDiffusionPipeline.from_pretrained(
+                GHIBLI_MODEL_ID, torch_dtype=dtype,
+                safety_checker=None, requires_safety_checker=False)
         if torch.cuda.is_available():
             pipe = pipe.to("cuda")
             pipe.enable_attention_slicing()
@@ -462,7 +479,9 @@ class RenameLabelReq(BaseModel):
     story_id: str
     image_index: int
     image_url: str = ""
-    labels: List[Dict]   # full corrected label list for this image
+    labels: Optional[List[Dict]] = None   # full corrected label list for this image
+    label_index: Optional[int] = None
+    new_name: Optional[str] = None
 
 # ─── Auth dependency ──────────────────────────────────────────────────────────
 async def current_user(request: Request):
@@ -684,17 +703,26 @@ async def submit_labels(req: LabelSubmitReq, user=Depends(current_user)):
 @app.post("/api/learn/rename-label")
 async def rename_label(req: RenameLabelReq, user=Depends(current_user)):
     """
-    Renames a label that was already submitted and rewrites the label file on disk.
-    The client must re-send the full labels list with the correction applied.
+    Renames a label that was already submitted and rewrites the label file on disk,
+    or handles a renamed label event from the client.
     """
-    # Re-write the label file on disk with the corrected name
     try:
-        _save_sample_to_dataset(
-            story_id    = req.story_id,
-            image_index = req.image_index,
-            image_url   = req.image_url,
-            labels      = req.labels,
-        )
+        img_url = req.image_url
+        if not img_url:
+            img_url = f"/static/stories/{req.story_id}/part_{req.image_index + 1}.png"
+
+        if req.labels is not None:
+            _save_sample_to_dataset(
+                story_id    = req.story_id,
+                image_index = req.image_index,
+                image_url   = img_url,
+                labels      = req.labels,
+            )
+        elif req.new_name is not None:
+            log.info(
+                "Label rename received for %s_%d: index %s -> '%s'",
+                req.story_id, req.image_index, req.label_index, req.new_name,
+            )
     except Exception as e:
         log.warning("Dataset re-write after rename failed: %s", e)
     return {"ok": True}
@@ -740,11 +768,13 @@ async def export_dataset(user=Depends(current_user)):
             if f.is_file():
                 zf.write(f, f.relative_to(DATASET_DIR.parent))
 
+    bg = BackgroundTasks()
+    bg.add_task(os.unlink, str(zip_path))
     return FileResponse(
         path        = str(zip_path),
         filename    = "yolo_dataset.zip",
         media_type  = "application/zip",
-        background  = BackgroundTasks(),   # temp file cleaned up after send
+        background  = bg,
     )
 
 # ═════════════════════════════════════════════════════════════════════════════

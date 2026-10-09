@@ -367,12 +367,27 @@ def run_training():
 
 def check_dataset():
     """Print class distribution and flag any invalid labels."""
-    data_root     = Path(DATASET_DIR).resolve()
-    class_names   = detect_class_names(data_root)
-    label_dir     = str(data_root / "labels" / "train")
-    counts        = Counter()
-    bad           = []
-    n_files       = 0
+    data_root = Path(DATASET_DIR).resolve()
+    if not data_root.exists():
+        print(f"\n📊 Dataset directory '{data_root}' does not exist yet.")
+        print("💡 Label some images in the app first to populate the dataset.")
+        return
+
+    label_dir = str(data_root / "labels" / "train")
+    txt_files = glob.glob(os.path.join(label_dir, "*.txt"))
+    classes_txt = data_root / "classes.txt"
+    has_classes = classes_txt.exists() and bool(classes_txt.read_text().strip())
+
+    if not txt_files and not has_classes:
+        print(f"\n📊 Dataset check — 0 label files in {label_dir}")
+        print("ℹ️  Dataset is currently empty. No labels have been submitted in the app yet.")
+        print("💡 Open the app, explore story images, and submit labels to populate this dataset.")
+        return
+
+    class_names = detect_class_names(data_root)
+    counts = Counter()
+    bad = []
+    n_files = 0
 
     for lf in glob.glob(os.path.join(label_dir, "*.txt")):
         n_files += 1
