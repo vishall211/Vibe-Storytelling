@@ -24,4 +24,5 @@ numpy
 pillow
 python-dotenv
 pyjwt
+
 pyngrok

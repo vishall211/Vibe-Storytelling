@@ -73,14 +73,16 @@ Different parts of the system run at different times:
 Main project folders:
 
 ```text
-vibestory/
+Vibe storytelling/
 ├── backend/
 │   ├── app.py
 │   ├── train.py
+│   ├── ngrok_tunnel.py
 │   ├── requirements.txt
 │   ├── .env
 │   ├── kokoro-v1.0.onnx
 │   ├── voices.bin
+│   ├── yolov8n.pt
 │   ├── hf_cache/
 │   ├── static/
 │   └── yolo_dataset/
@@ -95,6 +97,12 @@ vibestory/
 │       ├── linux/
 │       ├── windows/
 │       └── web/
+├── milestone/
+│   ├── README.md
+│   ├── milestone_1_voice_and_multilingual_input.md
+│   ├── milestone_2_story_and_art_generation.md
+│   ├── milestone_3_interactive_object_detection.md
+│   └── milestone_4_dataset_and_model_training.md
 ├── README.md
 ├── STORY.txt
 └── PROJECT_REPORT.md
@@ -102,12 +110,14 @@ vibestory/
 
 Important files:
 
+- `milestone/`: Complete student research documentation for the 4 project milestones.
 - `backend/app.py`: Main FastAPI backend.
-- `backend/train.py`: YOLO training script.
+- `backend/train.py`: YOLO training & augmentation script.
 - `backend/requirements.txt`: Python dependencies.
 - `frontend/vibestory/lib/main.dart`: Main Flutter app code.
 - `frontend/vibestory/pubspec.yaml`: Flutter dependencies and assets.
 - `backend/static/`: Generated story images and audio.
+- `backend/yolo_dataset/`: Stored labeled dataset with classes.txt and dataset.yaml.
 - `backend/yolo_dataset/`: User-labeled YOLO training dataset.
 - `backend/hf_cache/`: Hugging Face model cache.
 - `backend/.env`: Local backend configuration.
